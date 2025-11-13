@@ -24,9 +24,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║     XvX LOADER - PRODUCTION BUILD SYSTEM                 ║" -ForegroundColor Cyan
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host "XvX LOADER - PRODUCTION BUILD SYSTEM" -ForegroundColor Cyan
 Write-Host ""
 
 # Step 1: Check payload exists
@@ -118,9 +116,7 @@ $finalBinary = Get-Item "output\$OutputName"
 $sizeKB = [math]::Round($finalBinary.Length / 1KB, 2)
 
 Write-Host ""
-Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║                  BUILD SUCCESSFUL                        ║" -ForegroundColor Green
-Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
+Write-Host "BUILD SUCCESSFUL" -ForegroundColor Green
 Write-Host ""
 Write-Host "Output:       output\$OutputName" -ForegroundColor White
 Write-Host "Size:         $sizeKB KB" -ForegroundColor White
