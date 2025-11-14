@@ -1,7 +1,7 @@
 /*
- * ============================================================================
+ * 
  * AMSI BYPASS MODULE
- * ============================================================================
+ * 
  *
  * Author: 28Zaakypro@proton.me
  * 
@@ -20,7 +20,6 @@
  * mov eax, 0x80070057  ; Error E_INVALIDARG
  * ret
  *
- * ============================================================================
  */
 
 #include "amsi_bypass.h"
@@ -109,15 +108,11 @@ BOOL PatchAmsiScanBuffer() {
 }
 
 /*
- * DisableAMSI
- * -----------
  * Disables AMSI by patching AmsiScanBuffer.
  */
 BOOL DisableAMSI(AMSI_RESULT* result) {
     printf("\n");
-    printf("╔══════════════════════════════════════════════════════╗\n");
-    printf("║       AMSI BYPASS                                     ║\n");
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
+    printf("AMSI BYPASS\n");
     
     result->success = FALSE;
     result->amsiScanBufferPatched = FALSE;
@@ -131,9 +126,7 @@ BOOL DisableAMSI(AMSI_RESULT* result) {
 
 void PrintAMSIResult(AMSI_RESULT* result) {
     printf("\n");
-    printf("╔══════════════════════════════════════════════════════╗\n");
-    printf("║       RÉSULTAT DU BYPASS AMSI                         ║\n");
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
+    printf("RÉSULTAT DU BYPASS AMSI\n");
     
     if (result->success) {
         printf("SUCCESS: AMSI disabled\n");
