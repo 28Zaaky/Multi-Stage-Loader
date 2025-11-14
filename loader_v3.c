@@ -1,4 +1,5 @@
 /*
+ *
  * ██╗  ██╗██╗   ██╗██╗  ██╗    ██╗      ██████╗  █████╗ ██████╗ ███████╗██████╗
  * ╚██╗██╔╝██║   ██║╚██╗██╔╝    ██║     ██╔═══██╗██╔══██╗██╔══██╗██╔════╝██╔══██╗
  *  ╚███╔╝ ██║   ██║ ╚███╔╝     ██║     ██║   ██║███████║██║  ██║█████╗  ██████╔╝
@@ -343,7 +344,7 @@ int main()
     }
 #else
     // DEBUG MODE: Skip debugger check to allow testing
-    printf("[*] XvX Loader v3.0-RT (DEBUG MODE)\n");
+    printf("[*] XvX Loader v1.0-RT (DEBUG MODE)\n");
     printf("[*] Debugger check DISABLED for testing\n\n");
 #endif
 
