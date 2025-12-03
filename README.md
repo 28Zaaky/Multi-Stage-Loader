@@ -1,4 +1,4 @@
-# XvX Loader v1.0
+# xvxLdr v1.0
 
 Windows shellcode loader with AES-256-CBC encryption and EDR/sandbox evasion techniques.
 
