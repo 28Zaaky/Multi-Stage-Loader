@@ -20,20 +20,6 @@
 #include "unhooking.h"
 #include "obfuscation.h"
 
-// LOAD FRESH NTDLL
-/*
- * LoadFreshNTDLL
- * --------------
- * Loads ntdll.dll from disk into memory.
- * This copy has NO hooks because it is not mapped by the Windows loader.
- *
- * PROCESS:
- * 1. Build the path: C:\Windows\System32\ntdll.dll
- * 2. Open the file with CreateFile
- * 3. Read the entire content into memory
- * 4. Return the base address
- */
-
 PVOID LoadFreshNTDLL() {
     printf("[*] Loading fresh ntdll.dll from disk...\n");
 
@@ -97,22 +83,6 @@ PVOID LoadFreshNTDLL() {
     return freshNtdll;
 }
 
-// FIND .TEXT SECTION
-/*
- * FindTextSection
- * ---------------
- * Locates the .text (executable code) section in a PE module.
- *
- * The .text section contains all executable code of ntdll, including
- * all Nt* functions that can be hooked.
- *
- * PROCESS:
- * 1. Read the DOS header (offset 0)
- * 2. Follow e_lfanew to the NT header
- * 3. Iterate over the sections
- * 4. Find the one named ".text"
- */
-
 BOOL FindTextSection(PVOID moduleBase, PVOID* textStart, SIZE_T* textSize) {
     printf("[*] Searching for .text section...\n");
 
@@ -153,28 +123,6 @@ BOOL FindTextSection(PVOID moduleBase, PVOID* textStart, SIZE_T* textSize) {
     printf("    [!] Section .text not found\n");
     return FALSE;
 }
-
-// RESTORE THE .TEXT SECTION
-/*
- * RestoreTextSection
- * ------------------
- * Copies the clean .text section over the hooked one.
- *
- * WARNING:
- * - The .text section is normally PAGE_EXECUTE_READ
- * - It must be temporarily changed to PAGE_EXECUTE_READWRITE
- * - Copy the clean version
- * - Restore the protections
- * - Flush the CPU instruction cache
- *
- * PROCESS:
- * 1. Locate .text in the hooked ntdll (in memory)
- * 2. Locate .text in the fresh ntdll (from disk)
- * 3. Change protections of the hooked version
- * 4. Copy the clean version over it
- * 5. Restore protections
- * 6. Flush instruction cache
- */
 
 BOOL RestoreTextSection(PVOID hookedNtdll, PVOID freshNtdll) {
     printf("[*] Restoring .text section...\n");
@@ -245,23 +193,6 @@ BOOL RestoreTextSection(PVOID hookedNtdll, PVOID freshNtdll) {
     
     return TRUE;
 }
-
-// MAIN FUNCTION: UNHOOK NTDLL
-/*
- * UnhookNTDLL
- * -----------
- * Main function that orchestrates the entire unhooking process.
- *
- * STEPS:
- * 1. Obtain the address of ntdll in memory (hooked)
- * 2. Load a fresh ntdll from disk
- * 3. Restore the .text section
- * 4. Cleanup
- *
- * RESULT:
- * After this function, all NTAPI functions are in their
- * original state, with no EDR hooks.
- */
 
 BOOL UnhookNTDLL(UNHOOK_RESULT* result) {
     printf("\n");
