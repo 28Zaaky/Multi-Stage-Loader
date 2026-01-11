@@ -111,11 +111,7 @@ static BOOL LoadFreshNtdll(void)
     return TRUE;
 }
 
-/*
- * FindSyscallAddress
- * ------------------
- * Searches for "syscall; ret" (0F 05 C3) in ntdll
- */
+// Searches for "syscall; ret" (0F 05 C3) in ntdll
 static PVOID FindSyscallAddress(PVOID moduleBase)
 {
     PIMAGE_DOS_HEADER dosHeader = (PIMAGE_DOS_HEADER)moduleBase;
