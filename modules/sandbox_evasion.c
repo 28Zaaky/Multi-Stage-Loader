@@ -96,18 +96,6 @@ BOOL CheckVirtualMachine() {
     return isVM;
 }
 
-/*
- * CheckDebugger
- * -------------
- * Vérifie si un debugger est attaché au processus.
- * 
- * MÉTHODES :
- * - IsDebuggerPresent()
- * - CheckRemoteDebuggerPresent()
- * - PEB flags (Process Environment Block)
- * - NtQueryInformationProcess
- */
-
 BOOL CheckDebugger() {
     BOOL isDebugged = FALSE;
     
@@ -135,8 +123,7 @@ BOOL CheckDebugger() {
     }
     */
     
-    // Le PEB contient un flag BeingDebugged
-    
+    // Le PEB contient le flag BeingDebugged
     #ifdef _WIN64
     PPEB peb = (PPEB)__readgsqword(0x60);  // GS:[0x60] contient le PEB en x64
     #else
@@ -221,9 +208,7 @@ BOOL CheckSystemResources() {
         lowResources = TRUE;
     }
     
-    // ========================================================================
     // VÉRIFIER LA RAM
-    // ========================================================================
     MEMORYSTATUSEX memStatus;
     memStatus.dwLength = sizeof(memStatus);
     GlobalMemoryStatusEx(&memStatus);
@@ -235,14 +220,12 @@ BOOL CheckSystemResources() {
     
     if (ramGB < 4) {
         #ifndef PRODUCTION
-        printf("      [!] Moins de 4GB RAM = suspect\n");
+        printf("      [!] Moins de 4GB RAM = sus\n");
         #endif
         lowResources = TRUE;
     }
     
-    // ========================================================================
     // VÉRIFIER L'ESPACE DISQUE
-    // ========================================================================
     ULARGE_INTEGER freeBytesAvailable, totalBytes, totalFreeBytes;
     if (GetDiskFreeSpaceExA("C:\\", &freeBytesAvailable, &totalBytes, &totalFreeBytes)) {
         DWORD diskGB = (DWORD)(totalBytes.QuadPart / (1024 * 1024 * 1024));
@@ -276,7 +259,7 @@ BOOL CheckUptime() {
     printf("[*] Vérification de l'uptime système...\n");
     #endif
     
-    DWORD uptime = GetTickCount64() / 1000;  // En secondes
+    DWORD uptime = GetTickCount64() / 1000; 
     DWORD minutes = uptime / 60;
     DWORD hours = minutes / 60;
     
@@ -376,7 +359,7 @@ BOOL CheckProcessCount() {
         } while (Process32Next(hSnapshot, &pe32));
     }
     
-    CloseHandle(hSnapshot);  // Utiliser CloseHandle standard, pas SysCloseHandle
+    CloseHandle(hSnapshot);
     
     #ifndef PRODUCTION
     printf("    • Nombre de processus : %d\n", processCount);
@@ -488,15 +471,15 @@ void PrintEvasionResult(EVASION_RESULT* result) {
     
     if (result->score >= 50) {
         #ifndef PRODUCTION
-        printf("  ⚠️  VERDICT : CERTAINEMENT UNE SANDBOX\n");
+        printf("  VERDICT : CERTAINEMENT UNE SANDBOX\n");
         #endif
     } else if (result->score >= 30) {
         #ifndef PRODUCTION
-        printf("  ⚠️  VERDICT : PROBABLEMENT UNE SANDBOX\n");
+        printf("  VERDICT : PROBABLEMENT UNE SANDBOX\n");
         #endif
     } else {
         #ifndef PRODUCTION
-        printf("  ✅ VERDICT : ENVIRONNEMENT RÉEL\n");
+        printf("  VERDICT : ENVIRONNEMENT RÉEL\n");
         #endif
     }
     
@@ -505,9 +488,7 @@ void PrintEvasionResult(EVASION_RESULT* result) {
     #endif
 }
 
-BOOL ShouldExit(EVASION_RESULT* result) {
-    // Décider si on doit quitter pour éviter l'analyse
-    
+BOOL ShouldExit(EVASION_RESULT* result) {    
     if (result->score >= 50) {
         #ifndef PRODUCTION
         printf("  [DÉCISION] Score trop élevé → EXIT\n");
