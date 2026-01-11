@@ -13,12 +13,7 @@ typedef int BOOL;
 #define FALSE 0
 #endif
 
-/*
- * AMSI Bypass Module
- * 
- * Disables Windows Antimalware Scan Interface by patching AmsiScanBuffer.
- * Allows PowerShell scripts and .NET assemblies to run without AV scanning.
- */
+// AMSI Bypass Module
 
 // Results from AMSI bypass operation
 typedef struct _AMSI_RESULT
