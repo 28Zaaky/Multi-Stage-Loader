@@ -1,9 +1,7 @@
 # DoSyscall - Indirect Syscall Stub
 #
-# Windows x64 appel:
-#   RCX=ssn, RDX=syscallAddr, R8=arg1, R9=arg2, [RSP+0x28..0x40]=arg3..arg6
-# Syscall attend:
-#   EAX=SSN, R10=arg1, RDX=arg2, R8=arg3, R9=arg4, [RSP+0x28..0x30]=arg5,arg6
+# Windows x64 call: RCX=ssn, RDX=syscallAddr, R8=arg1, R9=arg2, [RSP+0x28..0x40]=arg3..arg6
+# Syscall expects: EAX=SSN, R10=arg1, RDX=arg2, R8=arg3, R9=arg4, [RSP+0x28..0x30]=arg5,arg6
 
 .text
 .globl DoSyscall
@@ -51,7 +49,7 @@ DoSyscall:
     popq %rbx
     ret
 
-# DoSyscall11 - Extended version for 11 arguments
+# Extended version for 11 arguments
 # Windows x64 call: RCX=ssn, RDX=syscallAddr, R8..R9=arg1..2, stack=arg3..11
 # Syscall expects: EAX=SSN, R10=arg1, RDX=arg2, R8=arg3, R9=arg4, stack=arg5..11
 
