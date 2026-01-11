@@ -23,7 +23,7 @@ typedef unsigned long long SIZE_T;
 #endif
 
 // NTDLL Unhooking Module
-
+ 
 // Results from unhooking operation
 typedef struct _UNHOOK_RESULT {
     BOOL success;
