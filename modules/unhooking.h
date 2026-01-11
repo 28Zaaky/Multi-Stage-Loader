@@ -22,12 +22,7 @@ typedef void* PVOID;
 typedef unsigned long long SIZE_T;
 #endif
 
-/*
- * NTDLL Unhooking Module
- * 
- * Removes EDR hooks from ntdll.dll by loading a fresh copy from disk
- * and restoring the .text section to its original state.
- */
+// NTDLL Unhooking Module
 
 // Results from unhooking operation
 typedef struct _UNHOOK_RESULT {
