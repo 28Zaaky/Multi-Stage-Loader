@@ -195,10 +195,7 @@ BOOL RestoreTextSection(PVOID hookedNtdll, PVOID freshNtdll) {
 }
 
 BOOL UnhookNTDLL(UNHOOK_RESULT* result) {
-    printf("\n");
-    printf("╔══════════════════════════════════════════════════════╗\n");
-    printf("║       UNHOOKING NTDLL.DLL                            ║\n");
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
+    printf("UNHOOKING NTDLL.DLL\n\n");
 
     // Initialize result
     result->success = FALSE;
@@ -252,9 +249,7 @@ BOOL UnhookNTDLL(UNHOOK_RESULT* result) {
 // DISPLAY RESULT
 void PrintUnhookResult(UNHOOK_RESULT* result) {
     printf("\n");
-    printf("╔══════════════════════════════════════════════════════╗\n");
-    printf("║       UNHOOKING RESULT                               ║\n");
-    printf("╚══════════════════════════════════════════════════════╝\n\n");
+    printf("UNHOOKING RESULT\n\n");
     
     if (result->success) {
         printf("  SUCCESS: ntdll.dll is now clean\n");
